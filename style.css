@@ -137,7 +137,14 @@ header p {
     box-shadow: 0 12px 25px rgba(0, 0, 0, .7), 0 0 30px var(--glow);
     border-color: var(--color);
 }
-.house-logo { width: 110px; height: 110px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(0 0 15px var(--glow)); }
+
+/* TRUCO PARA QUITAR EL FONDO BLANCO DE LOS LOGOS */
+.house-logo { 
+    width: 110px; height: 110px; object-fit: contain; margin-bottom: 1rem; 
+    filter: drop-shadow(0 0 15px var(--glow)); 
+    mix-blend-mode: multiply; /* Hace que el blanco sea transparente */
+}
+
 .house-name {
     font-size: 1.4rem; font-weight: 700; color: var(--text-light);
     text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
@@ -172,15 +179,6 @@ header p {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     font-family: 'MedievalSharp', cursive; font-size: 1.6rem; font-weight: bold;
     color: #fff; text-shadow: 0 0 10px #000, 0 0 10px var(--color); z-index: 3; pointer-events: none;
-}
-
-/* ETIQUETA DE CAPACIDAD MÁXIMA */
-.max-capacity-label {
-    margin-top: 0.6rem;
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-family: 'MedievalSharp', cursive;
-    letter-spacing: 1px;
 }
 
 @media (max-width: 768px){
