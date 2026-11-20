@@ -1,21 +1,505 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Reloj de Arena - Recuento de Casas</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The House Cup · La Copa de las Casas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=MedievalSharp&display=swap" rel="stylesheet">
+<style>
+    :root{
+        --text: #c9d3e8;
+        --text-light: #f4ecd8;
+        --muted: #a89984;
+        --gold: #d4af37;
+
+        /* Colores de las casas (idénticos al Oráculo) */
+        --pegasus: #f2c33a;
+        --pegasus-glow: rgba(242, 195, 58, .65);
+        --dragon: #e03131;
+        --dragon-glow: rgba(224, 49, 49, .65);
+        --centauro: #2f9e44;
+        --centauro-glow: rgba(47, 158, 68, .65);
+        --kraken: #1c7ed6;
+        --kraken-glow: rgba(28, 126, 214, .65);
+    }
+
+    *{ box-sizing: border-box; margin: 0; padding: 0; }
+
+    body{
+        font-family: 'Cinzel', serif;
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem 1.25rem 4rem;
+        overflow-x: hidden;
+        position: relative;
+        background-color: #0c0a09;
+        background-image: 
+            radial-gradient(circle at 50% 40%, rgba(45, 35, 25, 0.8) 0%, transparent 60%),
+            radial-gradient(circle at 10% 90%, rgba(20, 15, 10, 0.9) 0%, transparent 50%),
+            radial-gradient(circle at 90% 90%, rgba(20, 15, 10, 0.9) 0%, transparent 50%),
+            url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.08"/></svg>');
+    }
+
+    /* Viñeta para oscurecer los bordes */
+    body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%);
+        z-index: 0;
+    }
+
+    /* ---------- ESTILOS DE IDIOMA SECUNDARIO ---------- */
+    .lang-es {
+        display: block;
+        font-size: 0.8em;
+        color: #e8dfcc;
+        font-family: 'Cinzel', serif;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        margin-top: 0.4rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        text-transform: none;
+    }
+
+    /* ---------- CONTROLES DE AUDIO ---------- */
+    .audio-controls {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 8px 16px;
+        border-radius: 30px;
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px);
+    }
+
+    .mute-btn {
+        background: transparent;
+        border: none;
+        color: var(--gold);
+        font-size: 1.4rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+    .mute-btn:hover { transform: scale(1.15); }
+
+    input[type="range"] {
+        -webkit-appearance: none;
+        width: 80px;
+        background: transparent;
+        cursor: pointer;
+    }
+    input[type="range"]:focus { outline: none; }
+    input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%; height: 6px; background: rgba(212, 175, 55, 0.25); border-radius: 3px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+        background: var(--gold); margin-top: -5px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+        transition: transform 0.2s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    input[type="range"]::-moz-range-track {
+        width: 100%; height: 6px; background: rgba(212, 175, 55, 0.25); border-radius: 3px;
+    }
+    input[type="range"]::-moz-range-thumb {
+        height: 16px; width: 16px; border-radius: 50%; background: var(--gold); border: none;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+    }
+
+    /* ---------- VELAS FLOTANTES ---------- */
+    .candles-layer {
+        position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .candle {
+        position: absolute; width: 6px; height: 28px;
+        background: linear-gradient(to right, #eaddcd, #fdf6e3, #d4c4b0);
+        border-radius: 3px; box-shadow: inset -1px 0 2px rgba(0,0,0,0.4);
+        animation: floatCandle 6s ease-in-out infinite alternate;
+    }
+    .candle::before {
+        content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+        width: 8px; height: 14px; background: #ffb703; border-radius: 50% 50% 20% 20%;
+        box-shadow: 0 0 10px #ffb703, 0 0 20px #fb8500, 0 0 40px rgba(251, 133, 0, 0.6);
+        animation: flicker 0.15s infinite alternate;
+    }
+    @keyframes floatCandle { 0% { transform: translateY(0px); } 100% { transform: translateY(-30px); } }
+    @keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.9; } 100% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+
+    /* ---------- CABECERA ---------- */
+    header{
+        position: relative; z-index: 1; text-align: center; margin-bottom: 4rem;
+        width: 100%; max-width: 1100px; animation: fadeInDown 1.5s ease-out;
+    }
+    .header-columns {
+        display: flex; align-items: center; justify-content: center; gap: 3rem; width: 100%;
+    }
+    .col { flex: 1; display: flex; flex-direction: column; align-items: center; max-width: 450px; }
+    .divider {
+        width: 2px; height: 120px;
+        background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+        opacity: 0.7;
+    }
+    .header-subtitle {
+        font-family: 'MedievalSharp', cursive; color: var(--gold); font-size: 0.9rem;
+        letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+    h1 {
+        font-size: clamp(1.6rem, 3.5vw, 2.5rem); font-weight: 900; letter-spacing: .05em;
+        text-transform: uppercase; color: var(--gold);
+        text-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 4px 10px rgba(0,0,0,0.9);
+        margin-bottom: 0.8rem; line-height: 1.1;
+    }
+    header p {
+        font-family: 'MedievalSharp', cursive; color: #d1c3b0; font-size: 1rem;
+        letter-spacing: .05em; font-style: italic; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        line-height: 1.4;
+    }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ---------- CONTENEDOR DE PUNTOS ---------- */
+    .container {
+        position: relative; z-index: 1; width: 100%; max-width: 1100px;
+        display: flex; flex-direction: column; align-items: center; gap: 3rem;
+    }
+    
+    .houses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+        width: 100%;
+    }
+
+    /* ---------- TARJETA DE CASA ---------- */
+    .house-card {
+        background: linear-gradient(160deg, #231b15 0%, #110c08 100%);
+        border: 1px solid rgba(212, 175, 55, 0.15);
+        border-radius: 12px;
+        padding: 2rem 1rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .6);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    .house-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, .7), 0 0 30px var(--glow);
+        border-color: var(--color);
+    }
+
+    .house-logo {
+        width: 110px;
+        height: 110px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+        filter: drop-shadow(0 0 15px var(--glow));
+    }
+
+    .house-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 0.2rem;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    }
+
+    /* ---------- TUBO DE CRISTAL (GEMAS) ---------- */
+    .tube-wrapper {
+        margin-top: 1.5rem;
+        position: relative;
+    }
+
+    .tube {
+        width: 65px;
+        height: 250px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 3px solid rgba(212, 175, 55, 0.3);
+        border-radius: 35px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.6);
+    }
+
+    /* Reflejo del cristal */
+    .tube::after {
+        content: '';
+        position: absolute;
+        top: 5%;
+        left: 15%;
+        width: 20%;
+        height: 90%;
+        background: linear-gradient(to right, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 35px;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* Relleno de gemas animadas */
+    .tube-fill {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 0%; /* Controlado por JS */
+        transition: height 2s cubic-bezier(0.4, 0, 0.2, 1);
+        background-image: 
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 10%, transparent 11%),
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 15%, transparent 16%);
+        background-size: 20px 20px, 30px 30px;
+        background-position: 0 0, 10px 15px;
+        animation: fallingGems 3s linear infinite;
+        background-color: var(--color);
+        box-shadow: 0 0 20px var(--color);
+        z-index: 1;
+    }
+
+    @keyframes fallingGems {
+        from { background-position: 0px -20px, 10px -15px; }
+        to { background-position: 0px 0px, 10px 0px; }
+    }
+
+    /* Puntos numéricos */
+    .points-display {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: 'MedievalSharp', cursive;
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 0 0 10px #000, 0 0 10px var(--color);
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px){
+        .header-columns { flex-direction: column; gap: 1.5rem; }
+        .divider { width: 80%; height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent); }
+        .audio-controls { bottom: 10px; right: 10px; padding: 6px 12px; }
+        input[type="range"] { width: 60px; }
+    }
+</style>
 </head>
 <body>
+
+    <!-- AUDIOS -->
+    <audio id="bgMusic" loop>
+        <source src="fondo.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Controles de audio -->
+    <div class="audio-controls">
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" title="Volumen / Volume">
+        <button class="mute-btn" id="muteBtn" title="Mute/Unmute (Silenciar/Activar)">🔊</button>
+    </div>
+
+    <!-- Capa de velas flotantes -->
+    <div class="candles-layer" id="candlesLayer" aria-hidden="true"></div>
+
     <header>
-        <h1>El Reloj de Arena</h1>
-        <p class="subtitle">Que la magia de las criaturas guíe vuestro destino.</p>
+        <div class="header-columns">
+            <!-- Columna Inglés -->
+            <div class="col">
+                <div class="header-subtitle">The House Championship</div>
+                <h1>The House Cup</h1>
+                <p>May the magic of the mythical creatures guide your destiny.</p>
+            </div>
+            
+            <!-- Divisoria -->
+            <div class="divider"></div>
+            
+            <!-- Columna Castellano -->
+            <div class="col">
+                <div class="header-subtitle">El Campeonato de las Casas</div>
+                <h1>La Copa de las Casas</h1>
+                <p>Que la magia de las criaturas míticas guíe vuestro destino.</p>
+            </div>
+        </div>
     </header>
 
-    <main id="houses-container">
-        <!-- Aquí el JavaScript inyectará las tarjetas mágicas -->
+    <main class="container">
+        <div class="houses-grid" id="housesGrid">
+            <!-- Aquí JavaScript inyectará las tarjetas -->
+        </div>
     </main>
 
-    <script src="script.js"></script>
+<script>
+/* =========================================================
+   1. DATOS DE LAS CASAS Y PUNTOS (Edita aquí los puntos)
+   ========================================================= */
+const housesData = {
+    dragon: { 
+        name: "Dragon", 
+        nameEs: "Dragón",
+        points: 450, 
+        color: "var(--dragon)", 
+        glow: "var(--dragon-glow)", 
+        logo: "images/Dragon.png" 
+    },
+    kraken: { 
+        name: "Kraken", 
+        nameEs: "Kraken",
+        points: 420, 
+        color: "var(--kraken)", 
+        glow: "var(--kraken-glow)", 
+        logo: "images/Kraken.png" 
+    },
+    pegasus: { 
+        name: "Pegasus", 
+        nameEs: "Pegaso",
+        points: 480, 
+        color: "var(--pegasus)", 
+        glow: "var(--pegasus-glow)", 
+        logo: "images/Pegasus.png" 
+    },
+    centauro: { 
+        name: "Centaur", 
+        nameEs: "Centauro",
+        points: 390, 
+        color: "var(--centauro)", 
+        glow: "var(--centauro-glow)", 
+        logo: "images/Centauro.png" 
+    }
+};
+
+/* =========================================================
+   2. REFERENCIAS DEL DOM
+   ========================================================= */
+const housesGrid = document.getElementById('housesGrid');
+const candlesLayer = document.getElementById('candlesLayer');
+const bgMusic = document.getElementById('bgMusic');
+const muteBtn = document.getElementById('muteBtn');
+const volumeSlider = document.getElementById('volumeSlider');
+
+/* =========================================================
+   3. FONDO: VELAS FLOTANTES (Idéntico al Oráculo)
+   ========================================================= */
+(function createCandles(){
+    const numCandles = 25;
+    for (let i = 0; i < numCandles; i++){
+        const candle = document.createElement('div');
+        candle.className = 'candle';
+        candle.style.left = Math.random() * 100 + 'vw';
+        candle.style.top = (10 + Math.random() * 80) + 'vh';
+        const duration = 4 + Math.random() * 4;
+        const delay = Math.random() * -6;
+        candle.style.animationDuration = duration + 's';
+        candle.style.animationDelay = delay + 's';
+        const scale = 0.6 + Math.random() * 0.8;
+        candle.style.transform = `scale(${scale})`;
+        candlesLayer.appendChild(candle);
+    }
+})();
+
+/* =========================================================
+   4. AUDIO: CONFIGURACIÓN Y CONTROL (Idéntico al Oráculo)
+   ========================================================= */
+bgMusic.volume = 0.5;
+
+window.addEventListener('DOMContentLoaded', () => {
+    bgMusic.play().catch(e => {
+        console.log("Autoplay bloqueado. La música esperará a la primera interacción.");
+        const startMusicOnInteract = () => {
+            bgMusic.play().catch(err => console.log(err));
+            document.body.removeEventListener('click', startMusicOnInteract);
+        };
+        document.body.addEventListener('click', startMusicOnInteract);
+    });
+});
+
+volumeSlider.addEventListener('input', (e) => {
+    const vol = parseFloat(e.target.value);
+    bgMusic.volume = vol;
+    if (vol > 0 && muteBtn.textContent === '🔇') {
+        muteBtn.textContent = '🔊';
+        bgMusic.play().catch(() => {});
+    } else if (vol === 0) {
+        muteBtn.textContent = '🔇';
+    }
+});
+
+muteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (muteBtn.textContent === '🔊') {
+        bgMusic.pause();
+        muteBtn.textContent = '🔇';
+    } else {
+        muteBtn.textContent = '🔊';
+        bgMusic.play().catch(e => console.log(e));
+    }
+});
+
+/* =========================================================
+   5. RENDERIZADO DE LOS TUBOS DE PUNTOS
+   ========================================================= */
+function renderPoints() {
+    housesGrid.innerHTML = '';
+
+    // Encontrar la puntuación máxima para que el tubo del líder se llene al 100%
+    let maxPoints = 0;
+    for (let key in housesData) {
+        if (housesData[key].points > maxPoints) {
+            maxPoints = housesData[key].points;
+        }
+    }
+    if (maxPoints === 0) maxPoints = 1; // Evitar división por cero
+
+    // Generar tarjetas
+    for (let key in housesData) {
+        const house = housesData[key];
+        
+        // Calcular el porcentaje (mínimo 5% para que siempre se vea un poco de color)
+        let percentage = (house.points / maxPoints) * 100;
+        if (house.points > 0 && percentage < 5) percentage = 5;
+
+        const card = document.createElement('div');
+        card.className = 'house-card';
+        card.style.setProperty('--color', house.color);
+        card.style.setProperty('--glow', house.glow);
+
+        card.innerHTML = `
+            <img src="${house.logo}" alt="${house.name} Logo" class="house-logo">
+            <div class="house-name">
+                ${house.name}
+                <span class="lang-es">${house.nameEs}</span>
+            </div>
+            
+            <div class="tube-wrapper">
+                <div class="points-display">${house.points}</div>
+                <div class="tube">
+                    <div class="tube-fill" style="height: ${percentage}%"></div>
+                </div>
+            </div>
+        `;
+
+        housesGrid.appendChild(card);
+    }
+}
+
+// Iniciar
+renderPoints();
+</script>
 </body>
 </html>
