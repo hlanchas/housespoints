@@ -7,7 +7,7 @@ const houses = {
     dragon:   { name: "Dragon",   points: 14, color: "var(--dragon)",   glow: "var(--dragon-glow)",   logo: "images/Dragon.png" },
     kraken:   { name: "Kraken",   points: 32, color: "var(--kraken)",   glow: "var(--kraken-glow)",   logo: "images/Kraken.png" },
     pegasus:  { name: "Pegasus",  points: 30, color: "var(--pegasus)",  glow: "var(--pegasus-glow)",  logo: "images/Pegasus.png" },
-    centauro: { name: "Centaur",  points: 30, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" }
+    centauro: { name: "Centauro",  points: 30, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" }
 };
 
 // Cargar puntos guardados en el navegador (localStorage)
