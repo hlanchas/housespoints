@@ -138,11 +138,29 @@ header p {
     border-color: var(--color);
 }
 
-/* TRUCO PARA QUITAR EL FONDO BLANCO DE LOS LOGOS */
+/* LOGOS DE LAS CASAS */
 .house-logo { 
-    width: 110px; height: 110px; object-fit: contain; margin-bottom: 1rem; 
+    width: 100px; 
+    height: 100px; 
+    object-fit: contain; 
+    margin-bottom: 1rem; 
+    
+    /* Efecto para que el fondo blanco parezca un medallón */
+    background-color: #ffffff;
+    border-radius: 50%; /* Los hace redondos */
+    padding: 8px;       /* Un poco de margen blanco alrededor */
+    border: 2px solid var(--gold); /* Un borde dorado */
+    
+    /* El brillo mágico del color de la casa */
     filter: drop-shadow(0 0 15px var(--glow)); 
-    mix-blend-mode: multiply; /* Hace que el blanco sea transparente */
+    
+    /* IMPORTANTE: Hemos quitado el mix-blend-mode para que no se oscurezcan */
+    transition: transform 0.3s ease;
+}
+
+/* Un pequeño efecto al pasar el ratón */
+.house-card:hover .house-logo {
+    transform: scale(1.1);
 }
 
 .house-name {
