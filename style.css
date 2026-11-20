@@ -1,122 +1,191 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=MedievalSharp&display=swap');
+:root{
+    --text: #c9d3e8;
+    --text-light: #f4ecd8;
+    --muted: #a89984;
+    --gold: #d4af37;
 
-body {
-    background-color: #0d0d12; /* Fondo muy oscuro, casi negro azulado */
-    color: #e0e0e0;
+    --pegasus: #f2c33a;
+    --pegasus-glow: rgba(242, 195, 58, .65);
+    --dragon: #e03131;
+    --dragon-glow: rgba(224, 49, 49, .65);
+    --centauro: #2f9e44;
+    --centauro-glow: rgba(47, 158, 68, .65);
+    --kraken: #1c7ed6;
+    --kraken-glow: rgba(28, 126, 214, .65);
+}
+
+*{ box-sizing: border-box; margin: 0; padding: 0; }
+
+body{
     font-family: 'Cinzel', serif;
-    text-align: center;
-    padding: 2rem;
-    margin: 0;
+    color: var(--text);
     min-height: 100vh;
-    background-image: radial-gradient(circle at center, #1a1a24 0%, #0d0d12 100%);
-}
-
-h1 {
-    font-size: 3rem;
-    color: #f0e68c; /* Dorado antiguo */
-    text-shadow: 0 0 15px rgba(240, 230, 140, 0.6), 0 0 30px rgba(240, 230, 140, 0.2);
-    margin-bottom: 0.5rem;
-}
-
-.subtitle {
-    font-family: 'MedievalSharp', cursive;
-    color: #a0a0b0;
-    font-size: 1.2rem;
-    margin-bottom: 3rem;
-}
-
-#houses-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.house-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 2rem 1.5rem;
-    backdrop-filter: blur(10px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 3rem 1.25rem 4rem;
+    overflow-x: hidden;
+    position: relative;
+    background-color: #0c0a09;
+    background-image: 
+        radial-gradient(circle at 50% 40%, rgba(45, 35, 25, 0.8) 0%, transparent 60%),
+        radial-gradient(circle at 10% 90%, rgba(20, 15, 10, 0.9) 0%, transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(20, 15, 10, 0.9) 0%, transparent 50%),
+        url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.08"/></svg>');
 }
 
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%);
+    z-index: 0;
+}
+
+.lang-es {
+    display: block;
+    font-size: 0.8em;
+    color: #e8dfcc;
+    font-family: 'Cinzel', serif;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-top: 0.4rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-transform: none;
+}
+
+/* AUDIO */
+.audio-controls {
+    position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(0, 0, 0, 0.7); padding: 8px 16px; border-radius: 30px;
+    border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+}
+.mute-btn {
+    background: transparent; border: none; color: var(--gold);
+    font-size: 1.4rem; cursor: pointer; transition: transform 0.3s ease;
+}
+.mute-btn:hover { transform: scale(1.15); }
+input[type="range"] { -webkit-appearance: none; width: 80px; background: transparent; cursor: pointer; }
+input[type="range"]:focus { outline: none; }
+input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(212, 175, 55, 0.25); border-radius: 3px; }
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+    background: var(--gold); margin-top: -5px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.8); transition: transform 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"]::-moz-range-track { width: 100%; height: 6px; background: rgba(212, 175, 55, 0.25); border-radius: 3px; }
+input[type="range"]::-moz-range-thumb { height: 16px; width: 16px; border-radius: 50%; background: var(--gold); border: none; box-shadow: 0 0 10px rgba(212, 175, 55, 0.8); }
+
+/* VELAS */
+.candles-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.candle {
+    position: absolute; width: 6px; height: 28px;
+    background: linear-gradient(to right, #eaddcd, #fdf6e3, #d4c4b0);
+    border-radius: 3px; box-shadow: inset -1px 0 2px rgba(0,0,0,0.4);
+    animation: floatCandle 6s ease-in-out infinite alternate;
+}
+.candle::before {
+    content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    width: 8px; height: 14px; background: #ffb703; border-radius: 50% 50% 20% 20%;
+    box-shadow: 0 0 10px #ffb703, 0 0 20px #fb8500, 0 0 40px rgba(251, 133, 0, 0.6);
+    animation: flicker 0.15s infinite alternate;
+}
+@keyframes floatCandle { 0% { transform: translateY(0px); } 100% { transform: translateY(-30px); } }
+@keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.9; } 100% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+
+/* CABECERA */
+header {
+    position: relative; z-index: 1; text-align: center; margin-bottom: 4rem;
+    width: 100%; max-width: 1100px; animation: fadeInDown 1.5s ease-out;
+}
+.header-columns { display: flex; align-items: center; justify-content: center; gap: 3rem; width: 100%; }
+.col { flex: 1; display: flex; flex-direction: column; align-items: center; max-width: 450px; }
+.divider { width: 2px; height: 120px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); opacity: 0.7; }
+.header-subtitle {
+    font-family: 'MedievalSharp', cursive; color: var(--gold); font-size: 0.9rem;
+    letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+h1 {
+    font-size: clamp(1.6rem, 3.5vw, 2.5rem); font-weight: 900; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--gold);
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 4px 10px rgba(0,0,0,0.9);
+    margin-bottom: 0.8rem; line-height: 1.1;
+}
+header p {
+    font-family: 'MedievalSharp', cursive; color: #d1c3b0; font-size: 1rem;
+    letter-spacing: .05em; font-style: italic; text-shadow: 0 2px 5px rgba(0,0,0,0.8); line-height: 1.4;
+}
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+/* CONTENEDOR PRINCIPAL */
+.container { position: relative; z-index: 1; width: 100%; max-width: 1100px; display: flex; flex-direction: column; align-items: center; gap: 3rem; }
+.houses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; width: 100%; }
+
+/* TARJETAS DE CASAS */
+.house-card {
+    background: linear-gradient(160deg, #231b15 0%, #110c08 100%);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 12px; padding: 2rem 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, .6);
+    display: flex; flex-direction: column; align-items: center; position: relative;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
 .house-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, .7), 0 0 30px var(--glow);
+    border-color: var(--color);
+}
+.house-logo { width: 110px; height: 110px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(0 0 15px var(--glow)); }
+.house-name {
+    font-size: 1.4rem; font-weight: 700; color: var(--text-light);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
 }
 
-.house-logo {
-    width: 140px;
-    height: 140px;
-    object-fit: contain;
-    margin-bottom: 1rem;
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
-    transition: filter 0.3s;
+/* TUBO DE GEMAS */
+.tube-wrapper { margin-top: 1.5rem; position: relative; display: flex; flex-direction: column; align-items: center; }
+.tube {
+    width: 65px; height: 250px; background: rgba(0, 0, 0, 0.4);
+    border: 3px solid rgba(212, 175, 55, 0.3); border-radius: 35px;
+    position: relative; overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.6);
+}
+.tube::after {
+    content: ''; position: absolute; top: 5%; left: 15%; width: 20%; height: 90%;
+    background: linear-gradient(to right, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+    border-radius: 35px; pointer-events: none; z-index: 2;
+}
+.tube-fill {
+    position: absolute; bottom: 0; width: 100%; height: 0%;
+    transition: height 2s cubic-bezier(0.4, 0, 0.2, 1);
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 10%, transparent 11%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 15%, transparent 16%);
+    background-size: 20px 20px, 30px 30px;
+    background-position: 0 0, 10px 15px;
+    animation: fallingGems 3s linear infinite;
+    background-color: var(--color); box-shadow: 0 0 20px var(--color); z-index: 1;
+}
+@keyframes fallingGems { from { background-position: 0px -20px, 10px -15px; } to { background-position: 0px 0px, 10px 0px; } }
+.points-display {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-family: 'MedievalSharp', cursive; font-size: 1.6rem; font-weight: bold;
+    color: #fff; text-shadow: 0 0 10px #000, 0 0 10px var(--color); z-index: 3; pointer-events: none;
 }
 
-.house-card:hover .house-logo {
-    filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.5));
-}
-
-h2 {
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.points {
-    font-size: 3.5rem;
-    font-weight: bold;
-    margin: 0.5rem 0;
+/* ETIQUETA DE CAPACIDAD MÁXIMA */
+.max-capacity-label {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--muted);
     font-family: 'MedievalSharp', cursive;
-    text-shadow: 0 0 10px currentColor;
+    letter-spacing: 1px;
 }
 
-.pts-label {
-    font-size: 1rem;
-    font-family: 'Cinzel', serif;
-    color: #a0a0b0;
-    text-shadow: none;
+@media (max-width: 768px){
+    .header-columns { flex-direction: column; gap: 1.5rem; }
+    .divider { width: 80%; height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent); }
+    .audio-controls { bottom: 10px; right: 10px; padding: 6px 12px; }
+    input[type="range"] { width: 60px; }
 }
-
-.progress-bar {
-    width: 100%;
-    height: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-top: 1rem;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
-}
-
-.progress {
-    height: 100%;
-    background: currentColor; /* Hereda el color de texto de la casa */
-    border-radius: 6px;
-    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 10px currentColor;
-}
-
-/* --- COLORES Y ESTILOS POR CASA --- */
-
-/* DRAGÓN: Fuego y pasión */
-.dragon { border-color: #c0392b; }
-.dragon h2, .dragon .points { color: #e74c3c; }
-
-/* KRAKEN: Abismos marinos */
-.kraken { border-color: #2980b9; }
-.kraken h2, .kraken .points { color: #3498db; }
-
-/* PEGASO: Cielos y estrellas */
-.pegasus { border-color: #bdc3c7; }
-.pegasus h2, .pegasus .points { color: #ecf0f1; }
-
-/* CENTAURO: Bosques y tierra */
-.centauro { border-color: #27ae60; }
-.centauro h2, .centauro .points { color: #2ecc71; }
