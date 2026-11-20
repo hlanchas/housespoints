@@ -1,14 +1,14 @@
 /* =========================================================
    1. DATOS DE LAS CASAS Y PUNTOS
    ========================================================= */
-// Aquí defines la capacidad máxima visual que tendrán los tubos
+// Capacidad máxima visual del tubo
 const MAX_CAPACITY = 500; 
 
 const houses = {
-    dragon:   { name: "Dragon",   nameEs: "Dragón",   points: 14, color: "var(--dragon)",   glow: "var(--dragon-glow)",   logo: "images/Dragon.png" },
-    kraken:   { name: "Kraken",   nameEs: "Kraken",   points: 32, color: "var(--kraken)",   glow: "var(--kraken-glow)",   logo: "images/Kraken.png" },
-    pegasus:  { name: "Pegasus",  nameEs: "Pegaso",   points: 30, color: "var(--pegasus)",  glow: "var(--pegasus-glow)",  logo: "images/Pegasus.png" },
-    centauro: { name: "Centaur",  nameEs: "Centauro", points: 30, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" }
+    dragon:   { name: "Dragon",   points: 14, color: "var(--dragon)",   glow: "var(--dragon-glow)",   logo: "images/Dragon.png" },
+    kraken:   { name: "Kraken",   points: 32, color: "var(--kraken)",   glow: "var(--kraken-glow)",   logo: "images/Kraken.png" },
+    pegasus:  { name: "Pegasus",  points: 30, color: "var(--pegasus)",  glow: "var(--pegasus-glow)",  logo: "images/Pegasus.png" },
+    centauro: { name: "Centaur",  points: 30, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" }
 };
 
 // Cargar puntos guardados en el navegador (localStorage)
@@ -96,11 +96,8 @@ function renderHouses() {
         // El porcentaje se calcula sobre la capacidad máxima (500)
         let percentage = (house.points / MAX_CAPACITY) * 100;
         
-        // Evitar que pase del 100% si superan los 500 puntos
         if (percentage > 100) percentage = 100; 
-        
-        // Si tiene puntos pero es muy poquito (ej. 2 puntos), le damos un mínimo del 3% para que se vea el color
-        if (house.points > 0 && percentage < 3) percentage = 3;
+        if (house.points > 0 && percentage < 3) percentage = 3; // Mínimo visual
 
         const houseEl = document.createElement('div');
         houseEl.className = `house-card`;
@@ -111,7 +108,6 @@ function renderHouses() {
             <img src="${house.logo}" alt="Logo de ${house.name}" class="house-logo">
             <div class="house-name">
                 ${house.name}
-                <span class="lang-es">${house.nameEs}</span>
             </div>
             
             <div class="tube-wrapper">
@@ -119,7 +115,6 @@ function renderHouses() {
                 <div class="tube">
                     <div class="tube-fill" style="height: ${percentage}%"></div>
                 </div>
-                <div class="max-capacity-label">/ ${MAX_CAPACITY} pts</div>
             </div>
         `;
         container.appendChild(houseEl);
@@ -131,7 +126,6 @@ renderHouses();
 
 /* =========================================================
    6. FUNCIÓN PARA ACTUALIZAR PUNTOS POR CONSOLA (Opcional)
-   Uso: updatePoints('dragon', 50);
    ========================================================= */
 function updatePoints(houseKey, newPoints) {
     if (houses[houseKey]) {
@@ -142,6 +136,6 @@ function updatePoints(houseKey, newPoints) {
             pegasus: houses.pegasus.points,
             centauro: houses.centauro.points
         }));
-        renderHouses(); // Vuelve a dibujar los tubos
+        renderHouses(); 
     }
 }
