@@ -2,6 +2,8 @@
    1. DATOS DE LAS CASAS Y PUNTOS
    ========================================================= */
 const MAX_CAPACITY = 500; 
+const HIGHLIGHT_DURATION = 10000; // ms que cada casa permanece resaltada
+let highlightIndex = 0;
 
 const houses = {
     dragon:   { name: "Dragon",   points: 14, color: "var(--dragon)",   glow: "var(--dragon-glow)",   logo: "images/Dragon.png" },
@@ -49,39 +51,45 @@ const volumeSlider = document.getElementById('volumeSlider');
 /* =========================================================
    4. AUDIO
    ========================================================= */
-bgMusic.volume = 0.5;
+if(bgMusic) bgMusic.volume = 0.5;
 
 window.addEventListener('DOMContentLoaded', () => {
-    bgMusic.play().catch(e => {
-        const startMusicOnInteract = () => {
-            bgMusic.play().catch(err => console.log(err));
-            document.body.removeEventListener('click', startMusicOnInteract);
-        };
-        document.body.addEventListener('click', startMusicOnInteract);
+    if(bgMusic) {
+        bgMusic.play().catch(e => {
+            const startMusicOnInteract = () => {
+                bgMusic.play().catch(err => console.log(err));
+                document.body.removeEventListener('click', startMusicOnInteract);
+            };
+            document.body.addEventListener('click', startMusicOnInteract);
+        });
+    }
+});
+
+if(volumeSlider && bgMusic) {
+    volumeSlider.addEventListener('input', (e) => {
+        const vol = parseFloat(e.target.value);
+        bgMusic.volume = vol;
+        if (vol > 0 && muteBtn.textContent === '🔇') {
+            muteBtn.textContent = '🔊';
+            bgMusic.play().catch(() => {});
+        } else if (vol === 0) {
+            muteBtn.textContent = '🔇';
+        }
     });
-});
+}
 
-volumeSlider.addEventListener('input', (e) => {
-    const vol = parseFloat(e.target.value);
-    bgMusic.volume = vol;
-    if (vol > 0 && muteBtn.textContent === '🔇') {
-        muteBtn.textContent = '🔊';
-        bgMusic.play().catch(() => {});
-    } else if (vol === 0) {
-        muteBtn.textContent = '🔇';
-    }
-});
-
-muteBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (muteBtn.textContent === '🔊') {
-        bgMusic.pause();
-        muteBtn.textContent = '🔇';
-    } else {
-        muteBtn.textContent = '🔊';
-        bgMusic.play().catch(e => console.log(e));
-    }
-});
+if(muteBtn && bgMusic) {
+    muteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (muteBtn.textContent === '🔊') {
+            bgMusic.pause();
+            muteBtn.textContent = '🔇';
+        } else {
+            muteBtn.textContent = '🔊';
+            bgMusic.play().catch(e => console.log(e));
+        }
+    });
+}
 
 /* =========================================================
    5. RENDERIZADO DE LOS TUBOS
@@ -121,9 +129,6 @@ function renderHouses() {
     applyHighlight();
 }
 
-// Dibujar al cargar la página
-renderHouses();
-
 /* =========================================================
    6. FUNCIÓN PARA ACTUALIZAR PUNTOS POR CONSOLA (Opcional)
    ========================================================= */
@@ -143,9 +148,6 @@ function updatePoints(houseKey, newPoints) {
 /* =========================================================
    7. RESALTADO CÍCLICO DE LAS CASAS
    ========================================================= */
-const HIGHLIGHT_DURATION = 10000; // ms que cada casa permanece resaltada
-let highlightIndex = 0;
-
 function applyHighlight() {
     const cards = container.querySelectorAll('.house-card');
     if (!cards.length) return;
@@ -158,6 +160,11 @@ function highlightNextHouse() {
     applyHighlight();
 }
 
-// Resaltar la primera casa al cargar y luego rotar cada HIGHLIGHT_DURATION
-applyHighlight();
+/* =========================================================
+   8. INICIALIZACIÓN (Al final del archivo)
+   ========================================================= */
+// Dibujar al cargar la página
+renderHouses();
+
+// Iniciar el ciclo
 setInterval(highlightNextHouse, HIGHLIGHT_DURATION);
