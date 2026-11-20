@@ -1,7 +1,6 @@
 /* =========================================================
    1. DATOS DE LAS CASAS Y PUNTOS
    ========================================================= */
-// Capacidad máxima visual del tubo
 const MAX_CAPACITY = 500; 
 
 const houses = {
@@ -93,17 +92,16 @@ function renderHouses() {
     for (let key in houses) {
         const house = houses[key];
         
-        // El porcentaje se calcula sobre la capacidad máxima (500)
         let percentage = (house.points / MAX_CAPACITY) * 100;
-        
         if (percentage > 100) percentage = 100; 
-        if (house.points > 0 && percentage < 3) percentage = 3; // Mínimo visual
+        if (house.points > 0 && percentage < 3) percentage = 3; 
 
         const houseEl = document.createElement('div');
-        houseEl.className = `house-card`;
+        houseEl.className = 'house-card';
         houseEl.style.setProperty('--color', house.color);
         houseEl.style.setProperty('--glow', house.glow);
         
+        // IMPORTANTE: Aquí se usan comillas invertidas (backticks) para crear la plantilla HTML
         houseEl.innerHTML = `
             <img src="${house.logo}" alt="Logo de ${house.name}" class="house-logo">
             <div class="house-name">
