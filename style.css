@@ -43,18 +43,6 @@ body::after {
     z-index: 0;
 }
 
-.lang-es {
-    display: block;
-    font-size: 0.8em;
-    color: #e8dfcc;
-    font-family: 'Cinzel', serif;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    margin-top: 0.4rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-    text-transform: none;
-}
-
 /* AUDIO */
 .audio-controls {
     position: fixed; bottom: 20px; right: 20px; z-index: 100;
@@ -138,30 +126,20 @@ header p {
     border-color: var(--color);
 }
 
-/* LOGOS DE LAS CASAS */
+/* LOGOS EN FORMA DE MEDALLÓN */
 .house-logo { 
     width: 100px; 
     height: 100px; 
     object-fit: contain; 
     margin-bottom: 1rem; 
-    
-    /* Efecto para que el fondo blanco parezca un medallón */
     background-color: #ffffff;
-    border-radius: 50%; /* Los hace redondos */
-    padding: 8px;       /* Un poco de margen blanco alrededor */
-    border: 2px solid var(--gold); /* Un borde dorado */
-    
-    /* El brillo mágico del color de la casa */
+    border-radius: 50%; 
+    padding: 8px;       
+    border: 2px solid var(--gold); 
     filter: drop-shadow(0 0 15px var(--glow)); 
-    
-    /* IMPORTANTE: Hemos quitado el mix-blend-mode para que no se oscurezcan */
     transition: transform 0.3s ease;
 }
-
-/* Un pequeño efecto al pasar el ratón */
-.house-card:hover .house-logo {
-    transform: scale(1.1);
-}
+.house-card:hover .house-logo { transform: scale(1.1); }
 
 .house-name {
     font-size: 1.4rem; font-weight: 700; color: var(--text-light);
