@@ -1,15 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=MedievalSharp&display=swap');
+
 body {
-    background-color: #1a1a1a;
+    background-color: #0d0d12; /* Fondo muy oscuro, casi negro azulado */
     color: #e0e0e0;
-    font-family: 'Cinzel', serif; /* Necesitarás importar esta fuente de Google Fonts */
+    font-family: 'Cinzel', serif;
     text-align: center;
     padding: 2rem;
+    margin: 0;
+    min-height: 100vh;
+    background-image: radial-gradient(circle at center, #1a1a24 0%, #0d0d12 100%);
 }
 
 h1 {
     font-size: 3rem;
-    color: #f0e68c; /* Color dorado */
-    text-shadow: 0 0 10px rgba(240, 230, 140, 0.7);
+    color: #f0e68c; /* Dorado antiguo */
+    text-shadow: 0 0 15px rgba(240, 230, 140, 0.6), 0 0 30px rgba(240, 230, 140, 0.2);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-family: 'MedievalSharp', cursive;
+    color: #a0a0b0;
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
 }
 
 #houses-container {
@@ -21,59 +34,89 @@ h1 {
 }
 
 .house-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 1.5rem;
-    backdrop-filter: blur(5px);
-    transition: transform 0.3s, box-shadow 0.3s;
+    padding: 2rem 1.5rem;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .house-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
 }
 
 .house-logo {
-    width: 100px;
-    height: 100px;
+    width: 140px;
+    height: 140px;
     object-fit: contain;
     margin-bottom: 1rem;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+    transition: filter 0.3s;
+}
+
+.house-card:hover .house-logo {
+    filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.5));
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .points {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: bold;
     margin: 0.5rem 0;
-    font-family: 'MedievalSharp', cursive; /* Otra fuente de fantasía */
+    font-family: 'MedievalSharp', cursive;
+    text-shadow: 0 0 10px currentColor;
 }
 
-/* Colores por casa */
-.gryffindor { border-color: #ae0001; }
-.gryffindor .points { color: #ff6b6b; }
-
-.slytherin { border-color: #2a623d; }
-.slytherin .points { color: #69db7c; }
-
-.ravenclaw { border-color: #222f5b; }
-.ravenclaw .points { color: #74c0fc; }
-
-.hufflepuff { border-color: #ecb939; }
-.hufflepuff .points { color: #ffd43b; }
+.pts-label {
+    font-size: 1rem;
+    font-family: 'Cinzel', serif;
+    color: #a0a0b0;
+    text-shadow: none;
+}
 
 .progress-bar {
     width: 100%;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
     overflow: hidden;
     margin-top: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
 }
 
 .progress {
     height: 100%;
-    background: currentColor; /* Toma el color del texto de la casa */
-    border-radius: 5px;
-    transition: width 0.5s ease-in-out;
+    background: currentColor; /* Hereda el color de texto de la casa */
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px currentColor;
 }
+
+/* --- COLORES Y ESTILOS POR CASA --- */
+
+/* DRAGÓN: Fuego y pasión */
+.dragon { border-color: #c0392b; }
+.dragon h2, .dragon .points { color: #e74c3c; }
+
+/* KRAKEN: Abismos marinos */
+.kraken { border-color: #2980b9; }
+.kraken h2, .kraken .points { color: #3498db; }
+
+/* PEGASO: Cielos y estrellas */
+.pegasus { border-color: #bdc3c7; }
+.pegasus h2, .pegasus .points { color: #ecf0f1; }
+
+/* CENTAURO: Bosques y tierra */
+.centauro { border-color: #27ae60; }
+.centauro h2, .centauro .points { color: #2ecc71; }
