@@ -7,7 +7,7 @@ const houses = {
     dragon:   { name: "Dragon",   points: 14, color: "var(--dragon)",   glow: "var(--dragon-glow)",   logo: "images/Dragon.png" },
     kraken:   { name: "Kraken",   points: 32, color: "var(--kraken)",   glow: "var(--kraken-glow)",   logo: "images/Kraken.png" },
     pegasus:  { name: "Pegasus",  points: 30, color: "var(--pegasus)",  glow: "var(--pegasus-glow)",  logo: "images/Pegasus.png" },
-    centauro: { name: "Centauro",  points: 30, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" }
+    centauro: { name: "Centaur",  points: 30, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" }
 };
 
 // Cargar puntos guardados en el navegador (localStorage)
@@ -101,7 +101,6 @@ function renderHouses() {
         houseEl.style.setProperty('--color', house.color);
         houseEl.style.setProperty('--glow', house.glow);
         
-        // IMPORTANTE: Aquí se usan comillas invertidas (backticks) para crear la plantilla HTML
         houseEl.innerHTML = `
             <img src="${house.logo}" alt="Logo de ${house.name}" class="house-logo">
             <div class="house-name">
@@ -117,6 +116,9 @@ function renderHouses() {
         `;
         container.appendChild(houseEl);
     }
+
+    // Reaplicar el resaltado tras reconstruir el DOM
+    applyHighlight();
 }
 
 // Dibujar al cargar la página
@@ -137,3 +139,25 @@ function updatePoints(houseKey, newPoints) {
         renderHouses(); 
     }
 }
+
+/* =========================================================
+   7. RESALTADO CÍCLICO DE LAS CASAS
+   ========================================================= */
+const HIGHLIGHT_DURATION = 10000; // ms que cada casa permanece resaltada
+let highlightIndex = 0;
+
+function applyHighlight() {
+    const cards = container.querySelectorAll('.house-card');
+    if (!cards.length) return;
+    cards.forEach(card => card.classList.remove('highlighted'));
+    cards[highlightIndex % cards.length].classList.add('highlighted');
+}
+
+function highlightNextHouse() {
+    highlightIndex++;
+    applyHighlight();
+}
+
+// Resaltar la primera casa al cargar y luego rotar cada HIGHLIGHT_DURATION
+applyHighlight();
+setInterval(highlightNextHouse, HIGHLIGHT_DURATION);
