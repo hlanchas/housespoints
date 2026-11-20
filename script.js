@@ -1,9 +1,9 @@
 // Definimos las nuevas casas con los nombres de tus archivos
 const houses = {
-    dragon:   { name: "Dragón",   points: 450, logo: "images/Dragon.png" },
-    kraken:   { name: "Kraken",   points: 420, logo: "images/Kraken.png" },
-    pegasus:  { name: "Pegaso",   points: 480, logo: "images/Pegasus.png" },
-    centauro: { name: "Centauro", points: 390, logo: "images/Centauro.png" }
+    dragon:   { name: "Dragón",   points: 14, logo: "images/Dragon.png" },
+    kraken:   { name: "Kraken",   points: 32, logo: "images/Kraken.png" },
+    pegasus:  { name: "Pegaso",   points: 30, logo: "images/Pegasus.png" },
+    centauro: { name: "Centauro", points: 30, logo: "images/Centauro.png" }
 };
 
 // Cargar puntos guardados en el navegador (si existen)
