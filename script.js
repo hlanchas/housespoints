@@ -6,10 +6,11 @@ const HIGHLIGHT_DURATION = 10000; // ms que cada casa permanece resaltada
 let highlightIndex = 0;
 
 const houses = {
-    dragon:   { name: "Dragon",   points: 14, color: "var(--dragon)",   glow: "var(--dragon-glow)",   logo: "images/Dragon.png" },
-    kraken:   { name: "Kraken",   points: 32, color: "var(--kraken)",   glow: "var(--kraken-glow)",   logo: "images/Kraken.png" },
-    pegasus:  { name: "Pegasus",  points: 30, color: "var(--pegasus)",  glow: "var(--pegasus-glow)",  logo: "images/Pegasus.png" },
-    centauro: { name: "Centaur",  points: 30, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" }
+    centauro: { name: "Centaur",  points: 46, color: "var(--centauro)", glow: "var(--centauro-glow)", logo: "images/Centauro.png" },
+    dragon:   { name: "Dragon",   points: 30, color: "var(--dragon)",   glow: "var(--dragon-glow)",   logo: "images/Dragon.png" },
+    kraken:   { name: "Kraken",   points: 46, color: "var(--kraken)",   glow: "var(--kraken-glow)",   logo: "images/Kraken.png" },
+    pegasus:  { name: "Pegasus",  points: 42, color: "var(--pegasus)",  glow: "var(--pegasus-glow)",  logo: "images/Pegasus.png" }
+    
 };
 
 // Cargar puntos guardados en el navegador (localStorage)
